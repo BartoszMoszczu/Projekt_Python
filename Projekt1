@@ -1,0 +1,58 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+def load_image(image_path):
+    # Wczytaj obraz
+    image = cv2.imread(image_path)
+    return image
+
+
+def preprocess_image(image):
+    # Konwersja do skali szarości
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Zastosowanie filtru Gaussa
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    # Detekcja krawędzi za pomocą Canny
+    edges = cv2.Canny(blurred, 50, 150)
+    return edges
+
+
+def find_implant(image, edges):
+    # Znajdowanie konturów
+    contours, _ = cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for contour in contours:
+        # Ignorowanie małych konturów
+        if cv2.contourArea(contour) < 100:
+            continue
+        # Przybliżenie konturu prostokątem
+        x, y, w, h = cv2.boundingRect(contour)
+        # Możemy tu zastosować dodatkowe warunki, aby wykryć wszczep (np. wielkość, proporcje itp.)
+        if w > 20 and h > 20:  # Te warunki można dostosować do wymiarów wszczepu
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    return image
+
+
+def display_image(image):
+    # Wyświetlanie obrazu
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.axis('off')
+    plt.show()
+
+
+if __name__ == "__main__":
+    # Ścieżka do pliku obrazu
+    image_path = r'C:\Users\jajko\Desktop\jpdzb\pobrane3.jpg'
+
+    # Wczytaj obraz
+    image = load_image(image_path)
+
+    # Przetwórz obraz
+    edges = preprocess_image(image)
+
+    # Znajdź i zaznacz wszczep kardiologiczny
+    image_with_implant = find_implant(image, edges)
+
+    # Wyświetl obraz
+    display_image(image_with_implant)
