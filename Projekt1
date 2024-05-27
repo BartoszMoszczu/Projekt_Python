@@ -45,7 +45,7 @@ def display_image(image):
 
 if __name__ == "__main__":
     # Ścieżka do pliku obrazu
-    image_path = r'C:\Users\jajko\Desktop\jpdzb\pobrane3.jpg'
+    image_path = r'C:\Users\admin\Desktop\jpdzb\pobrane3.jpg'
 
     # Wczytaj obraz
     image = load_image(image_path)
